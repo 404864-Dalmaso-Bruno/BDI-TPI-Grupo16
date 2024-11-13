@@ -1,0 +1,142 @@
+﻿using CineTPIProgII.Models;
+using CineTPIProgII.Repositories.Interfaces;
+using CineTPIProgII.Repositories.Utils;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using System.Data;
+
+namespace CineTPIProgII.Repositories
+{
+    public class TicketsRepository : ITickets
+    {
+        private readonly CineProgContext _context;
+
+        public TicketsRepository(CineProgContext context)
+        {
+            _context = context;
+        }
+
+        public bool BajaTicket(int id)
+        {
+            bool aux = true;
+            try
+            {
+                var ticketExistente = _context.Tickets.Find(id);
+                if (ticketExistente != null)
+                {
+                    ticketExistente.Estado = false;
+                    _context.SaveChanges();
+                    aux = true;
+                }
+                else
+                {
+                    aux = false;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                aux = false;
+            }
+            return aux;
+        }
+
+        public List<DetallesTicket> GetDetalles() => _context.DetallesTickets.ToList();
+        public List<Empleado> GetEmpleados() => _context.Empleados.ToList();
+        public List<Reservada> GetReservados() =>_context.Reservadas.ToList();
+        public List<Ticket> GetTickets() => _context.Tickets.ToList();
+        public List<Butaca> GetButacas() => _context.Butacas.ToList();
+        public List<Cliente> GetClientes() => _context.Clientes.ToList();
+        public List<FormasPago> GetFormaDePagos() => _context.FormasPagos.ToList();
+        public List<Funcione> GetFunciones() => _context.Funciones.ToList();
+        public List<MediosPedido> GetMedioDeVenta() => _context.MediosPedidos.ToList();
+        public List<Promocione> GetPromociones() => _context.Promociones.ToList();
+
+        
+
+        public bool NuevoTicket(Ticket nuevo)
+        {
+            if (nuevo == null) return false;
+
+            using var transaction = _context.Database.BeginTransaction();
+            try
+            {
+                // Parámetro de salida para el nuevo ID de ticket
+                var nuevoIdTicketParam = new SqlParameter
+                {
+                    ParameterName = "@nuevo_id_ticket",
+                    SqlDbType = System.Data.SqlDbType.Int,
+                    Direction = System.Data.ParameterDirection.Output
+                };
+
+                // Llamada al procedimiento almacenado
+                _context.Database.ExecuteSqlRaw(
+                    "EXEC [dbo].[SP_INSERTAR_TICKET] @nuevo_id_ticket OUT, @fecha, @id_cliente,@id_empleado, @id_medio_pedido, @id_promocion, @total, @id_forma_pago",
+                    nuevoIdTicketParam,
+                    new SqlParameter("@fecha", nuevo.Fecha),
+                    new SqlParameter("@id_cliente", nuevo.IdCliente),
+                    new SqlParameter("@id_empleado",nuevo.IdEmpleado),
+                    new SqlParameter("@id_medio_pedido", nuevo.IdMedioPedido),
+                    new SqlParameter("@id_promocion", nuevo.IdPromocion),
+                    new SqlParameter("@total", nuevo.Total),
+                    new SqlParameter("@id_forma_pago", nuevo.IdFormaPago)
+                );
+
+                // Obtener el nuevo ID del ticket
+                nuevo.IdTicket = (int)nuevoIdTicketParam.Value;
+
+                // Insertar los detalles del ticket
+                foreach (var detalle in nuevo.DetallesTicket)
+                {
+                    detalle.IdTicket = nuevo.IdTicket;
+                     
+                    _context.DetallesTickets.Add(detalle);
+                }
+
+                _context.SaveChanges(); // Guardar detalles en la base de datos
+
+                transaction.Commit();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                Console.WriteLine($"Error al insertar el ticket: {ex.Message}");
+                return false;
+            }
+        }
+
+        public bool NuevoDetalle(DetallesTicket detalle)
+        {
+            try
+            {
+                _context.DetallesTickets.Add(detalle);
+                _context.SaveChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+         
+
+        }
+
+        public bool NuevaReserva(Reservada reserva)
+        {
+            if (reserva == null) { return false; }
+
+            try
+            {
+                _context.Reservadas.Add(reserva);
+                _context.SaveChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+            
+        }
+    }
+}
