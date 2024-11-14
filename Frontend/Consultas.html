@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-es">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Listar funciones</title>
-
-        <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-
+        <title>Consultas</title>
+        <link rel="stylesheet" href="Estilos.css">
+        <!-- <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'> -->
+        <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"> -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
         <style>
             body {
                 font-family: "Poppins", sans-serif;
@@ -90,47 +91,52 @@
         <ul>
             <li><a href="index.html">INICIO</a></li>
             <li><a href="Peliculas.html" class="actual">PELICULAS</a></li>
-            <li><a href="#">FUNCIONES</a></li>
+            <li><a href="Funciones.html">FUNCIONES</a></li>
             <li><a href="tickets.html">TICKETS</a></li>
-            <li><a href="Consultas.html">CONSULTAS</a></li>
-            
+            <li><a href="Consultas.html">INFORMES</a></li>
         </ul>
+
     </nav>
  
-    <div id="content"> 
+    <div id ="content"> 
         <div class="container mt-4">
-        <h1 class="mb-4">Funciones</h1> 
-        <h2> <a href="AgregarFuncion.html">Agregar funcion [+]</a></h2>
-        <div class="container mt-4"> 
-            <table class="table table-striped table-hover"> 
-                <thead class="table-primary"> 
-                    <tr> 
-                        <th>Titulo ||</th> 
-                        <th>Nro de sala ||</th> 
-                        <th>Fecha desde ||</th> 
-                        <th>Fecha hasta ||</th> 
-                        <th>Horario ||</th>
-                        <th>Precio ||</th>
-                        <th>
-                            <select class="form-control" id="selEStado" >
-                                <option value= 0>Todos</option>
-                                <option value= 1>Activo</option>
-                                <option value= 2 >Inactivo</option>
-                            </select>
-                        </th>
-                        <th>Acciones ||</th>
-                    </tr> 
-                </thead> 
-                <tbody id="funciones-body"> 
-                    <!-- Aquí se llenarán dinámicamente las funciones --> 
-                    
-                </tbody> 
+            <h1 class="mb-4">Consultar SP</h1> 
+            <h2> Seleccionar consulta</h2>
+            <div class="row">
+                <div class="col-xxl-2">
+                    <h3>
+                        <select class="form-control" id="idSelectSp" >
+                        <option value= 1>SP_01_Listar_ClientesConTickets</option>
+                        <option value= 2>SP_02_Listar_PeliculasConMasFunciones</option>
+                        <option value= 3 >SP_03_TotalVentasPorEmpleado</option>
+                        <option value= 4 >SP_04_Promociones_UtilizadasEn</option>
+                        <option value= 5 >SP_05_ClientesSinCompras</option>
+                        <option value= 6 >SP_06_PeliculasSinFunciones</option>
+                        <option value= 7 >SP_07_HorariosConMasFunciones</option>
+                        <option value= 8 >SP_08_TotalEntradasVendidasPorPelicula</option>
+                        <option value= 9 >SP_09_ClientesConGastoMayorA</option>
+                        <option value= 10 >SP_10_HistoricoSalasConMasButacasReservadas</option>
+                        </select>
+                    </h3> 
+                </div>
+                <div class="col-2">
+                    <label for="idParam" class="form-label">Param</label>
+                    <input type="text" class="form-control" id="idParam" >
+                </div>
+                <div class="col-2">
+                    <button>ok</button>
+                </div>
+                
+            </div >
+            <div class="row">
+                <table class="table table-striped table-hover tablita" id="idTabla"> 
+            </div>
+            
+                
                 
             </table> 
-        </div>
-            
         </div> 
     </div>
-    <script src="js/Funciones.js"></script>  
+    <script src="/js/Consultas.js"></script> 
 </body>
 </html>

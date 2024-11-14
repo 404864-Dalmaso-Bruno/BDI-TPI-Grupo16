@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => { 
     const API_URL = 'https://localhost:7283'; 
-    
+    const PELICULAS_URL = 'https://localhost:7283/api/Peliculas';
     const form = document.getElementById('form-orden'); 
     
     // Obtener los elementos del formulario 
@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const precioLabel = document.getElementById('labelPrecio');
     const precioTotal = document.getElementById('idPrecioTotal');
     const selectButacas = document.getElementById('butacas');
+    const tituloDePelicula = document.getElementById('labelPelicula');
 
     //================================================================================================ [ CARGAR BUTACAS CON FILTRO]
  //const selectButacas = document.getElementById('butacas');
@@ -179,7 +180,7 @@ async function cargarEmpleados() {
             const hoy = new Date(); // Fecha de hoy
     
             selectFunciones.innerHTML = '';
-            Funciones.forEach(Funcion => { 
+            Funciones.forEach(async Funcion => { 
                 const fechaHasta = new Date(Funcion.fechaHasta);
     
                 // Verificar si fechaHasta es mayor que la fecha de hoy
@@ -189,7 +190,8 @@ async function cargarEmpleados() {
                     option.textContent = 'Funcion ' + Funcion.idFuncion + ', Sala ' + Funcion.idSala; // Texto de la opción
                     
                     option.dataset.precio = Funcion.precio;
-                    
+                    option.dataset.idPelicula = await buscarTitulo(Funcion.idPelicula);
+
                     selectFunciones.appendChild(option); 
                 }
             }); 
@@ -198,17 +200,35 @@ async function cargarEmpleados() {
             alert('Ocurrió un error al cargar las Funciones'); 
         } 
     }
-    //########################################################################################33
-    
-//########################################################################################
+
     // Evento para actualizar el label cuando cambia la selección
-    selectFunciones.addEventListener('change', function(event) {
+    selectFunciones.addEventListener('change', async function(event) {
     const selectedOption = event.target.selectedOptions[0]; // Opción seleccionada
     const precio = selectedOption.dataset.precio; // Obtener el precio del atributo data
+    const Peli = selectedOption.dataset.idPelicula;
     cargarbutaca();
     // Actualizar el contenido del label
     precioLabel.value = precio; 
+    
+    tituloDePelicula.value = Peli;
+
     });
+    //=============================================================[FUNCION PARA OBTENER TITULO DE LA PELICULA SEGUN ID]
+    async function buscarTitulo(id) {
+        try {
+            const response = await fetch(PELICULAS_URL);
+            if (!response.ok) {
+                throw new Error('Error al obtener las peliculas');
+            }
+            const peliculas = await response.json();
+            const pelicula = peliculas.find(p => p.idPelicula === id);
+            //console.log(pelicula);
+            return pelicula ? pelicula.titulo : 'Desconocido';
+        } catch (error) {
+            console.error('Error al buscar el titulo:', error);
+            return 'Desconocido';
+        }
+    }
 //================================================================================================[ RECORRER Y LEER TABLA DETALLES ]
     // Función para recorrer la tabla y obtener los detalles de la orden 
     function obtenerDetallesTabla() { 

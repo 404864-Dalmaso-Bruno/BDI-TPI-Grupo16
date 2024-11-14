@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return 'Desconocido';
         }
     }
-
+    //=============================================================[FUNCION PARA OBTENER TITULO DE LA PELICULA SEGUN ID]
     async function buscarTitulo(id) {
         try {
             const response = await fetch(PELICULAS_URL);
